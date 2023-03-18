@@ -4,6 +4,7 @@
   "description": "",
   "homepage": "https://openjscad.xyz/",
   "repository": "https://github.com/jscad/OpenJSCAD.org",
+  "type": "module",
   "scripts": {
     "docs": "jsdoc --configure jsdoc.json",
     "coverage": "lerna run --concurrency 1 --stream coverage",
@@ -35,9 +36,9 @@
   "license": "MIT",
   "devDependencies": {
     "@jscad/sample-files": "github:jscad/sample-files#master",
-    "@lerna-lite/changed": "^1.11.3",
-    "@lerna-lite/cli": "^1.11.3",
-    "@lerna-lite/run": "^1.11.3",
+    "@lerna-lite/changed": "1.17.0",
+    "@lerna-lite/cli": "1.17.0",
+    "@lerna-lite/run": "1.17.0",
     "ava": "4.3.3",
     "docdash": "1.2.0",
     "jsdoc": "3.6.11",
@@ -80,7 +81,13 @@
       "arrow-spacing": "error",
       "prefer-arrow-callback": "error",
       "import/no-default-export": "error",
-      "no-var": "error"
+      "no-var": "error",
+      "env": {
+        "es6": true,
+        "browser": true,
+        "node": true,
+        "mocha": true
+      }
     }
   }
 }

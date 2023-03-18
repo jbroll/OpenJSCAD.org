@@ -4,12 +4,13 @@
   "description": "Web Application for JSCAD",
   "homepage": "https://openjscad.xyz/",
   "repository": "https://github.com/jscad/OpenJSCAD.org",
+  "type": "module",
   "main": "src/index.js",
   "unpkg": "dist/jscad-web.min.js",
+  "module": "dist/jscad-web.es.js",
   "scripts": {
-    "build": "browserify src/index.js -o dist/jscad-web.min.js -g uglifyify --standalone jscadWeb",
-    "dev": "budo demo.js --port=8081 --css ./css/demo.css --live -- -b",
-    "postinstall": "node postInstall.js && node -e \"console.log('\\u001b[35m\\u001b[1mLove JSCAD? You can now donate to our open collective:\\u001b[22m\\u001b[39m\\n > \\u001b[34mhttps://opencollective.com/openjscad/donate\\u001b[0m')\"",
+    "build": "rollup --config",
+    "dev": "budo demo.mjs --port=8081 --css ./css/demo.css --live -- -b",
     "version": "npm run build && git add dist"
   },
   "contributors": [
@@ -50,16 +51,18 @@
     "most": "1.8.0",
     "most-proxy": "3.3.0",
     "nanohtml": "1.9.1",
-    "webworkify": "1.5.0"
+    "webworkify": "1.5.0",
+    "rollup": "2.79.1",
+    "rollup-plugin-banner": "^0.2.1"
   },
   "devDependencies": {
     "ava": "4.3.3",
-    "browser-env": "^3.3.0",
-    "browserify": "16.5.1",
+    "browser-env": "3.3.0",
     "budo": "11.6.4",
     "copy-dir": "1.3.0",
     "docblock": "0.4.5",
-    "uglifyify": "5.0.2"
+    "rollup": "2.79.1",
+    "rollup-plugin-banner": "^0.2.1"
   },
   "collective": {
     "type": "opencollective",
