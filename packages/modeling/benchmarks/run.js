@@ -86,11 +86,45 @@ const runSuite = (name, benchmarks) => {
 }
 
 /**
+ * Generate timestamp for output file
+ */
+const getTimestamp = () => {
+  const now = new Date()
+  return now.toISOString().replace(/[:.]/g, '-').slice(0, 19)
+}
+
+/**
+ * Save results to JSON file
+ */
+const saveResults = (allResults, outputDir) => {
+  const timestamp = getTimestamp()
+  const outputFile = path.join(outputDir, `bench-${timestamp}.json`)
+
+  const output = {
+    timestamp: new Date().toISOString(),
+    node: process.version,
+    runs: BENCHMARK_RUNS,
+    warmup: WARMUP_RUNS,
+    results: allResults
+  }
+
+  fs.writeFileSync(outputFile, JSON.stringify(output, null, 2))
+  console.log(`Results saved to: ${outputFile}`)
+  return outputFile
+}
+
+/**
  * Load and run benchmark files
  */
 const main = () => {
   const args = process.argv.slice(2)
   const benchDir = __dirname
+  const outputDir = path.join(benchDir, 'results')
+
+  // Ensure results directory exists
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true })
+  }
 
   console.log('@jscad/modeling benchmarks')
   console.log(`Runs: ${BENCHMARK_RUNS} (+ ${WARMUP_RUNS} warmup)`)
@@ -134,6 +168,9 @@ const main = () => {
 
   console.log('\n' + '═'.repeat(60))
   console.log('Benchmark complete')
+
+  // Save results to timestamped file
+  saveResults(allResults, outputDir)
 }
 
 // Export for programmatic use
