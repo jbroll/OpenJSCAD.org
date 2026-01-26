@@ -8,6 +8,7 @@
   "types": "src/index.d.ts",
   "unpkg": "dist/jscad-modeling.min.js",
   "scripts": {
+    "bench": "node benchmarks/run.js",
     "build": "browserify src/index.js -o dist/jscad-modeling.min.js -g uglifyify --standalone jscadModeling",
     "coverage": "nyc --all --reporter=html --reporter=text npm test",
     "test": "ava 'src/**/*.test.js' --verbose --timeout 2m",
