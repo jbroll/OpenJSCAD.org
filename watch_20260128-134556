@@ -1,0 +1,76 @@
+Every 2.0s: git ll                                                                                                                                                                 blink: 13:45:56
+                                                                                                                                                                                     in 0.064s (0)
+* bf6fbf5a - (2 days ago) docs(modeling): clarify getPolygons() usage in PolygonTreeNode - John Roll (origin/perf/modeling-optimizations, perf/modeling-optimizations)                            
+* 2fb732b7 - (2 days ago) perf(modeling): remove O(n²) splice in PolygonTreeNode.remove() - John Roll                                                                                             
+* 2201775e - (2 days ago) perf(modeling): minor optimizations and defensive fixes - John Roll                                                                                                     
+* 6e1d0542 - (2 days ago) perf(modeling): replace concat with push in extrudeFromSlices - John Roll                                                                                               
+* f79369e7 - (2 days ago) test(modeling): add unit tests for splitPolygonByPlane - John Roll                                                                                                      
+* 2483da18 - (2 days ago) perf(modeling): fix O(n²) splice in splitPolygonByPlane duplicate removal - John Roll                                                                                   
+* a85994af - (2 days ago) test(modeling): add unit tests for flatten utility - John Roll                                                                                                          
+* 6176df63 - (2 days ago) perf(modeling): fix O(n²) flatten utility with iterative approach - John Roll                                                                                           
+| * 7e0be6d3 - (2 days ago) chore(modeling): bump version to 2.12.8 - John Roll (HEAD -> master, origin/master, origin/HEAD)                                                                      
+| * 818a2a1a - (18 hours ago) perf(modeling): reduce vec2 allocations in reTesselateCoplanarPolygons - John Roll                                                                                  
+| * 3d6214b6 - (81 minutes ago) perf(modeling): optimize poly3 for V8 performance - John Roll                                                                                                     
+| * eec32daa - (2 days ago) perf(modeling): add object pooling to splitPolygonByPlane - John Roll                                                                                                 
+| * 5d1e3579 - (2 days ago) chore(modeling): update package metadata for fork - John Roll                                                                                                         
+| * 76ee815f - (82 minutes ago) perf(modeling): optimize PolygonTreeNode with O(n²) splice removal - John Roll                                                                                    
+| * 9e955037 - (2 days ago) perf(modeling): minor optimizations and defensive fixes - John Roll                                                                                                   
+| * bb96505b - (2 days ago) perf(modeling): replace concat with push in extrudeFromSlices - John Roll                                                                                             
+| * e55e0fff - (82 minutes ago) perf(modeling): fix O(n²) splice in splitPolygonByPlane duplicate removal - John Roll                                                                             
+| * 1717e129 - (82 minutes ago) perf(modeling): fix O(n²) flatten utility with iterative approach - John Roll                                                                                     
+| * 7ae80401 - (2 hours ago) feat(modeling): add comprehensive benchmark suite - John Roll                                                                                                        
+| * d6a6ecbe - (2 days ago) docs(modeling): add CLAUDE.md for AI assistant guidance - John Roll                                                                                                   
+| * 9840895e - (2 hours ago) feat(modeling): add Minkowski sum operation for 3D geometries - John Roll (origin/pr/upstream-minkowski, pr/upstream-minkowski)                                      
+|/                                                                                                                                                                                                
+| * e3e62c37 - (2 days ago) perf(modeling): add object pooling to splitPolygonByPlane - John Roll (origin/pr/upstream-perf-object-pooling, pr/upstream-perf-object-pooling)                       
+|/                                                                                                                                                                                                
+| * f3365ffd - (2 days ago) perf(modeling): remove O(n²) splice in PolygonTreeNode.remove() - John Roll (origin/pr/upstream-perf-polygontree, pr/upstream-perf-polygontree)                       
+|/                                                                                                                                                                                                
+| * 7677905a - (2 days ago) test(modeling): add benchmark improvements and new test suites - John Roll (origin/pr/upstream-benchmarks, pr/upstream-benchmarks)                                    
+| * cbeb96f7 - (2 days ago) perf(modeling): add benchmark suite for performance testing - John Roll                                                                                               
+|/                                                                                                                                                                                                
+| * 299517d1 - (2 days ago) perf(modeling): replace concat with push in extrudeFromSlices - John Roll (origin/pr/upstream-perf-extrude, pr/upstream-perf-extrude)                                 
+|/                                                                                                                                                                                                
+| * 036a86cb - (2 days ago) test(modeling): add unit tests for splitPolygonByPlane - John Roll (origin/pr/upstream-perf-splitpolygon, pr/upstream-perf-splitpolygon)                              
+| * 6bdb5493 - (2 days ago) perf(modeling): fix O(n²) splice in splitPolygonByPlane duplicate removal - John Roll                                                                                 
+|/                                                                                                                                                                                                
+| * 7c9eaee0 - (2 days ago) test(modeling): add unit tests for flatten utility - John Roll (origin/pr/upstream-perf-flatten, pr/upstream-perf-flatten)                                            
+| * f6c9d284 - (2 days ago) perf(modeling): fix O(n²) flatten utility with iterative approach - John Roll                                                                                         
+|/                                                                                                                                                                                                
+* 93d5df5d - (10 weeks ago) perf(obj-serializer): improved performance by using Map for unique vertices - colin coin coin (origin/upstream-master, upstream-master)                               
+*   b138b6e9 - (4 months ago)  chore(release): Release : 2025 SEP 20 - Z3 Development                                                                                                             
+|\                                                                                                                                                                                                
+| * 11a9a2d9 - (4 months ago) chore(release): publish - z3dev                                                                                                                                     
+|/                                                                                                                                                                                                
+*   72542345 - (5 months ago) chore(all): merge pull request #1402 from jscad/fixes - Z3 Development                                                                                              
+|\                                                                                                                                                                                                
+| * 4500b715 - (5 months ago) fix(svg-deserializer): svg path should return one geom2 - z3dev                                                                                                     
+| * 074f05aa - (5 months ago) fix(modeling): corrected handling of pitch vs height in extrudeHelical - z3dev                                                                                      
+| * e2a212ff - (5 months ago) tests(modeling): added tests for height option of extrudeHelical - z3dev                                                                                            
+|/                                                                                                                                                                                                
+* efd7e843 - (12 months ago) docs(regl-renderer): fixed spelling in demo.html - hpb-htw                                                                                                           
+*   451d7d84 - (12 months ago) docs(web): corrected comments for web server setup - Z3 Development                                                                                                
+|\                                                                                                                                                                                                
+| * 1f7ea653 - (12 months ago) make sh code comfortable for copy&paste - hpb-htw                                                                                                                  
+|/                                                                                                                                                                                                
+*   b82f7f11 - (1 year, 1 month ago) chore(release): Release : 2024 DEC 29 - Z3 Development                                                                                                       
+|\                                                                                                                                                                                                
+| * d8010c4f - (1 year, 1 month ago) chore(release): publish - z3dev                                                                                                                              
+|/                                                                                                                                                                                                
+* 0cd6beb5 - (1 year, 1 month ago) docs(all): corrections and improvements to documentation and examples - Z3 Development                                                                         
+* 1519c7df - (1 year, 1 month ago) docs(modeling): fix typo in torus - Tomasz Jurkiewicz                                                                                                          
+*   68aa97ae - (1 year, 3 months ago) chore(all): Release : 2024 NOV 10 - Z3 Development                                                                                                          
+|\                                                                                                                                                                                                
+| * ce4978ee - (1 year, 3 months ago) chore(release): publish - z3dev                                                                                                                             
+|/                                                                                                                                                                                                
+*   0e6215a8 - (1 year, 3 months ago) style(all): changes to comply with lint - Z3 Development                                                                                                    
+|\                                                                                                                                                                                                
+| * 0070e9e4 - (1 year, 3 months ago) style(modeling): removed unused untested functions from OrthoNormalBasis - z3dev                                                                            
+| * d89354de - (1 year, 3 months ago) style(modeling): changes to comply with lint - z3dev                                                                                                        
+| * fc013848 - (1 year, 3 months ago) style(x3d-deserializer): changes to comply with lint - z3dev                                                                                                
+| * 8c5b23c0 - (1 year, 3 months ago) style(svg-deserializer): changes to comply with lint - z3dev                                                                                                
+| * 9789cbf5 - (1 year, 3 months ago) style(obj-deserializer): changes to comply with lint - z3dev                                                                                                
+| * 351da0da - (1 year, 3 months ago) style(json-deserializer): changes to comply with lint - z3dev                                                                                               
+| * 9e002fbc - (1 year, 3 months ago) style(io-utils): changes to comply with lint - z3dev                                                                                                        
+| * 9b45f67a - (1 year, 3 months ago) style(dxf-deserializer): changes to comply with lint - z3dev                                                                                                
+| * 1054f1d4 - (1 year, 3 months ago) style(amf-deserializer): changes to comply with lint - z3dev                                                                                                
