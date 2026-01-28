@@ -9,9 +9,8 @@ const create = require('./create')
  * @alias module:modeling/geometries/poly3.fromPointsAndPlane
  */
 const fromPointsAndPlane = (vertices, plane) => {
-  const poly = create(vertices)
-  poly.plane = plane // retain the plane for later use
-  return poly
+  // Create with same shape as create() for V8 hidden class consistency
+  return { vertices, plane, boundingSphere: null }
 }
 
 module.exports = fromPointsAndPlane
