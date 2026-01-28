@@ -86,11 +86,7 @@ class PolygonTreeNode {
     // mutating it here is safe. Non-root nodes are traversed via the queue below,
     // which skips removed nodes via the `if (node.polygon)` check.
     if (this.isRootNode() && this.children.length > 0) {
-      const compacted = []
-      for (let i = 0; i < this.children.length; i++) {
-        if (!this.children[i].removed) compacted.push(this.children[i])
-      }
-      this.children = compacted
+      this.children = this.children.filter((c) => !c.removed)
     }
 
     let children = [this]
