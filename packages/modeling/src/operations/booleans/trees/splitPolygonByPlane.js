@@ -12,8 +12,8 @@ const EPS_SQUARED = EPS * EPS
 // Remove consecutive duplicate vertices from a polygon vertex list.
 // Compares last vertex to first to handle wraparound.
 // Returns a new array (does not modify input).
-// IMPORTANT: Caller must ensure vertices.length >= 3 before calling.
 const removeConsecutiveDuplicates = (vertices) => {
+  if (vertices.length < 3) return vertices
   const result = []
   let prevvertex = vertices[vertices.length - 1]
   for (let i = 0; i < vertices.length; i++) {
