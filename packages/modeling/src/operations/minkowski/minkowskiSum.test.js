@@ -13,12 +13,9 @@ test('minkowskiSum: throws for non-geom3 inputs', (t) => {
   t.throws(() => minkowskiSum(cuboid(), 'invalid'), { message: /requires geom3/ })
 })
 
-test('minkowskiSum: throws for less than two geometries', (t) => {
-  t.throws(() => minkowskiSum(), { message: /requires at least two/ })
-  t.throws(() => minkowskiSum(cuboid()), { message: /requires at least two/ })
-})
-
-test('minkowskiSum: throws for more than two geometries', (t) => {
+test('minkowskiSum: throws for wrong number of geometries', (t) => {
+  t.throws(() => minkowskiSum(), { message: /exactly two/ })
+  t.throws(() => minkowskiSum(cuboid()), { message: /exactly two/ })
   t.throws(() => minkowskiSum(cuboid(), cuboid(), cuboid()), { message: /exactly two/ })
 })
 
@@ -158,4 +155,45 @@ test('minkowskiSum: throws for two non-convex geometries', (t) => {
   const nonConvex2 = subtract(cube2, hole2)
 
   t.throws(() => minkowskiSum(nonConvex1, nonConvex2), { message: /two non-convex/ })
+})
+
+test('minkowskiSum: torus + sphere preserves hole (face-local apex)', (t) => {
+  // Torus with innerRadius=3 (tube radius) and outerRadius=8 (distance to tube center)
+  // At z=0, the torus extends from radius 5 to 11 (8-3 to 8+3)
+  // Adding sphere of radius 1 should give 4 to 12
+  const { torus } = require('../../primitives')
+
+  const torusShape = torus({
+    innerRadius: 3,
+    outerRadius: 8,
+    innerSegments: 16,
+    outerSegments: 24
+  })
+
+  const sph = sphere({ radius: 1, segments: 8 })
+
+  t.false(isConvex(torusShape))
+
+  const result = minkowskiSum(torusShape, sph)
+
+  t.true(geom3.isA(result))
+  t.true(geom3.toPolygons(result).length > 0)
+
+  // Check that the hole is preserved by examining vertices at z≈0
+  const polygons = geom3.toPolygons(result)
+  let minRadius = Infinity
+
+  for (const poly of polygons) {
+    for (const v of poly.vertices) {
+      if (Math.abs(v[2]) < 0.5) {
+        const r = Math.sqrt(v[0] * v[0] + v[1] * v[1])
+        if (r < minRadius) minRadius = r
+      }
+    }
+  }
+
+  // With face-local apex, hole should be preserved
+  // Inner radius should be around 4 (8-3-1 = 4)
+  // If centroid-based (buggy), hole would be filled and minRadius would be ~0
+  t.true(minRadius > 3, `hole should be preserved, got minRadius=${minRadius}`)
 })
