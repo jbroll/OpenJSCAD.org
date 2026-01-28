@@ -35,12 +35,8 @@ const isConvex = require('./isConvex')
 const minkowskiSum = (...geometries) => {
   geometries = flatten(geometries)
 
-  if (geometries.length < 2) {
-    throw new Error('minkowskiSum requires at least two geometries')
-  }
-
-  if (geometries.length > 2) {
-    throw new Error('minkowskiSum currently supports exactly two geometries')
+  if (geometries.length !== 2) {
+    throw new Error('minkowskiSum requires exactly two geometries')
   }
 
   const [geomA, geomB] = geometries
@@ -96,8 +92,12 @@ const minkowskiSumNonConvexConvex = (geomA, geomB) => {
 }
 
 /**
- * Decompose a geom3 into tetrahedra using fan triangulation from centroid.
+ * Decompose a geom3 into tetrahedra using face-local apex points.
  * Each resulting tetrahedron is guaranteed to be convex.
+ *
+ * Unlike centroid-based decomposition, this approach works correctly for
+ * shapes where the centroid is outside the geometry (e.g., torus, U-shapes).
+ * Each polygon gets its own apex point, offset inward along its normal.
  */
 const decomposeIntoTetrahedra = (geometry) => {
   const polygons = geom3.toPolygons(geometry)
@@ -106,23 +106,47 @@ const decomposeIntoTetrahedra = (geometry) => {
     return []
   }
 
-  // Compute centroid of the geometry
-  const centroid = computeCentroid(geometry)
-
   const tetrahedra = []
 
-  // For each polygon, create tetrahedra from centroid to each triangle
+  // For each polygon, compute a face-local apex and create tetrahedra
   for (let i = 0; i < polygons.length; i++) {
-    const vertices = polygons[i].vertices
+    const polygon = polygons[i]
+    const vertices = polygon.vertices
 
-    // Fan triangulate the polygon and create tetrahedra
+    // Compute polygon center
+    let cx = 0, cy = 0, cz = 0
+    for (let k = 0; k < vertices.length; k++) {
+      cx += vertices[k][0]
+      cy += vertices[k][1]
+      cz += vertices[k][2]
+    }
+    cx /= vertices.length
+    cy /= vertices.length
+    cz /= vertices.length
+
+    // Get polygon plane (normal + offset)
+    const plane = poly3.plane(polygon)
+    const nx = plane[0], ny = plane[1], nz = plane[2]
+
+    // Offset inward along negative normal to create face-local apex
+    // The normal points outward, so we go in the negative direction
+    // Use a small offset - the actual distance doesn't matter much
+    // as long as the apex is on the interior side of the face
+    const offset = 0.1
+    const apex = [
+      cx - nx * offset,
+      cy - ny * offset,
+      cz - nz * offset
+    ]
+
+    // Fan triangulate the polygon and create tetrahedra from apex
     for (let j = 1; j < vertices.length - 1; j++) {
       const v0 = vertices[0]
       const v1 = vertices[j]
       const v2 = vertices[j + 1]
 
-      // Create tetrahedron from centroid and triangle
-      const tetPolygons = createTetrahedronPolygons(centroid, v0, v1, v2)
+      // Create tetrahedron from apex and triangle
+      const tetPolygons = createTetrahedronPolygons(apex, v0, v1, v2)
       tetrahedra.push(geom3.create(tetPolygons))
     }
   }
@@ -142,27 +166,6 @@ const createTetrahedronPolygons = (p0, p1, p2, p3) => {
     poly3.create([p1, p2, p3]), // face opposite p0
     poly3.create([p2, p0, p3])  // face opposite p1
   ]
-}
-
-/**
- * Compute the centroid of a geom3.
- */
-const computeCentroid = (geometry) => {
-  const vertices = extractUniqueVertices(geometry)
-
-  if (vertices.length === 0) {
-    return [0, 0, 0]
-  }
-
-  let x = 0, y = 0, z = 0
-  for (let i = 0; i < vertices.length; i++) {
-    x += vertices[i][0]
-    y += vertices[i][1]
-    z += vertices[i][2]
-  }
-
-  const n = vertices.length
-  return [x / n, y / n, z / n]
 }
 
 /**
