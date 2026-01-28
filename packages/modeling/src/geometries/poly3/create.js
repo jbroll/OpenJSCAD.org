@@ -18,7 +18,11 @@ const create = (vertices) => {
   if (vertices === undefined || vertices.length < 3) {
     vertices = [] // empty contents
   }
-  return { vertices }
+  // Initialize all properties upfront for consistent object shape.
+  // V8 optimizes property access when objects have the same hidden class.
+  // Without this, polygons get different shapes (vertices only, vertices+plane,
+  // vertices+plane+boundingSphere) causing megamorphic property access.
+  return { vertices, plane: null, boundingSphere: null }
 }
 
 module.exports = create
