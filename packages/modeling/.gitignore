@@ -1,0 +1,6 @@
+# Ignore detailed benchmark results (large JSON files)
+benchmarks/results/*.json
+
+# Track the summary log (NDJSON) - must negate directory first
+!benchmarks/results/
+!benchmarks/results/benchmark-log.ndjson
