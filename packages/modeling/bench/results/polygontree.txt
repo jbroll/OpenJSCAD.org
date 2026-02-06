@@ -1,0 +1,6 @@
+=== polygontree ===
+sphere-union 601.7
+swiss-cheese 106.0
+chainmail 593.4
+menger-intersect 28.9
+sphere-cloud 242.4

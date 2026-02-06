@@ -1,0 +1,6 @@
+=== splitpolygon ===
+sphere-union 587.7
+swiss-cheese 126.1
+chainmail 1363.3
+menger-intersect 22.2
+sphere-cloud 230.1
