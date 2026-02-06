@@ -1,0 +1,6 @@
+=== base ===
+sphere-union 612.9
+swiss-cheese 108.4
+chainmail 525.2
+menger-intersect 28.7
+sphere-cloud 235.5
