@@ -1,0 +1,26 @@
+=== COMPARISON SUMMARY ===
+
+--- base ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+
+--- extrude ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+
+--- flatten ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+
+--- object-pooling ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+
+--- polygontree ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+
+--- splitpolygon ---
+  union torus(32)+torus(32): torus(32) ms/op
+  spanning split (quad):     quad µs/op
+

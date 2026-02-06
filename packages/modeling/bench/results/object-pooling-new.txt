@@ -1,0 +1,12 @@
+════════════════════════════════════════════════════════════
+Quick Benchmark Timing (heavy mode)
+════════════════════════════════════════════════════════════
+
+swiss-cheese              23.33s
+sphere-union              25.65s
+sphere-cloud              25.16s
+menger-intersect          23.30s
+chainmail                 44.90s
+────────────────────────────────
+TOTAL                    142.34s
+
