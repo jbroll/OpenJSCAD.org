@@ -9,7 +9,13 @@ const create = require('./create')
  * @alias module:modeling/geometries/poly3.invert
  */
 const invert = (polygon) => {
-  const vertices = polygon.vertices.slice().reverse()
+  // Reverse vertices directly without intermediate slice() allocation
+  const src = polygon.vertices
+  const len = src.length
+  const vertices = new Array(len)
+  for (let i = 0; i < len; i++) {
+    vertices[i] = src[len - 1 - i]
+  }
   const inverted = create(vertices)
   if (polygon.plane) {
     // Flip existing plane to save recompute
