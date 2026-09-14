@@ -40,7 +40,7 @@ const reTesselateCoplanarPolygons = (sourcepolygons) => {
       let miny
       let maxy
       for (let i = 0; i < numvertices; i++) {
-        let pos2d = orthobasis.to2D(poly3d.vertices[i])
+        const pos2d = orthobasis.to2D(poly3d.vertices[i])
         // perform binning of y coordinates: If we have multiple vertices very
         // close to each other, give them the same y coordinate:
         const ycoordinatebin = Math.floor(pos2d[1] * ycoordinateBinningFactor)
@@ -55,7 +55,8 @@ const reTesselateCoplanarPolygons = (sourcepolygons) => {
           newy = pos2d[1]
           ycoordinatebins.set(ycoordinatebin, pos2d[1])
         }
-        pos2d = vec2.fromValues(pos2d[0], newy)
+        // Modify y in place instead of creating new vec2
+        pos2d[1] = newy
         vertices2d.push(pos2d)
         const y = pos2d[1]
         if ((i === 0) || (y < miny)) {
@@ -226,14 +227,11 @@ const reTesselateCoplanarPolygons = (sourcepolygons) => {
     for (const activepolygonKey in activepolygons) {
       const activepolygon = activepolygons[activepolygonKey]
 
-      let x = interpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, ycoordinate)
-      const topleft = vec2.fromValues(x, ycoordinate)
-      x = interpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, ycoordinate)
-      const topright = vec2.fromValues(x, ycoordinate)
-      x = interpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, nextycoordinate)
-      const bottomleft = vec2.fromValues(x, nextycoordinate)
-      x = interpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, nextycoordinate)
-      const bottomright = vec2.fromValues(x, nextycoordinate)
+      // Inline vec2 creation to avoid function call overhead
+      const topleft = [interpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, ycoordinate), ycoordinate]
+      const topright = [interpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, ycoordinate), ycoordinate]
+      const bottomleft = [interpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, nextycoordinate), nextycoordinate]
+      const bottomright = [interpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, nextycoordinate), nextycoordinate]
       const outpolygon = {
         topleft: topleft,
         topright: topright,
