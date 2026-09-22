@@ -10,6 +10,8 @@ const { union } = require('./index')
 
 const { center } = require('../transforms/center')
 
+const { measureVolume } = require('../../measurements')
+
 test('union of one or more geom3 objects produces expected geometry', (t) => {
   const geometry1 = sphere({ radius: 2, segments: 8 })
 
@@ -165,4 +167,28 @@ test('union of multiple non-overlapping geom3 preserves all polygons', (t) => {
   t.notThrows(() => geom3.validate(obs))
   // Each cuboid has 6 faces, so 10 cuboids = 60 polygons
   t.is(pts.length, 60)
+})
+
+test('union groups geometries by bounds, whatever order they arrive in', (t) => {
+  // Two cuboids that overlap, and one far away. Merging in input order pairs
+  // the first with the distant one, and the concatenation that follows spans
+  // both, so the overlapping pair no longer looks separable.
+  const atX = (x) => center({ relativeTo: [x, 0, 0] }, cuboid({ size: [2, 2, 2] }))
+  const overlapping = [atX(0), atX(1)]
+  const distant = atX(50)
+
+  const expected = measureVolume(union(union(...overlapping), distant))
+
+  for (const order of [[overlapping[0], distant, overlapping[1]], [distant, overlapping[0], overlapping[1]]]) {
+    const obs = union(...order)
+    t.notThrows(() => geom3.validate(obs))
+    t.is(Math.round(measureVolume(obs) * 1e6), Math.round(expected * 1e6))
+  }
+})
+
+test('union of a geometry with no polygons keeps the others', (t) => {
+  const obs = union(cuboid({ size: [2, 2, 2] }), geom3.create(), center({ relativeTo: [50, 0, 0] }, cuboid({ size: [2, 2, 2] })))
+
+  t.notThrows(() => geom3.validate(obs))
+  t.is(Math.round(measureVolume(obs) * 1e6), 16e6)
 })
