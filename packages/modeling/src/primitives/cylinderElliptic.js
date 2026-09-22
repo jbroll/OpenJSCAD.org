@@ -46,7 +46,7 @@ const cylinderElliptic = (options) => {
   if (endRadius.every((n) => n === 0) && startRadius.every((n) => n === 0)) throw new Error('at least one radius must be positive')
   if (!isGTE(startAngle, 0)) throw new Error('startAngle must be positive')
   if (!isGTE(endAngle, 0)) throw new Error('endAngle must be positive')
-  if (!isGTE(segments, 4)) throw new Error('segments must be four or more')
+  if (!isGTE(segments, 3)) throw new Error('segments must be three or more')
 
   startAngle = startAngle % TAU
   endAngle = endAngle % TAU

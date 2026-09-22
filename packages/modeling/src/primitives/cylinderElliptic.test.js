@@ -204,6 +204,15 @@ test('cylinderElliptic (cone)', (t) => {
   t.is(pts.length, 64)
 })
 
+test('cylinderElliptic (three segments)', (t) => {
+  const prism = cylinderElliptic({ segments: 3 })
+  t.notThrows(() => geom3.validate(prism))
+  t.is(geom3.toPolygons(prism).length, 9)
+
+  const pyramid = cylinderElliptic({ endRadius: [0, 0], segments: 3 })
+  t.notThrows(() => geom3.validate(pyramid))
+})
+
 test('cylinderElliptic (squished)', (t) => {
   const obs = cylinderElliptic({ startRadius: [1, 0], endRadius: [0, 1], segments: 4 })
   const pts = geom3.toPoints(obs)
