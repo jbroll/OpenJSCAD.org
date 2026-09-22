@@ -2,6 +2,7 @@ const test = require('ava')
 
 const { geom2, path2 } = require('../../geometries')
 const { offset } = require('./index')
+const { rectangle } = require('../../primitives')
 const { comparePoints } = require('../../../test/helpers')
 const measureBoundingBox = require('../../measurements/measureBoundingBox')
 
@@ -500,4 +501,16 @@ test('offset (options): offsetting of round geom2 produces expected offset geom2
   t.notThrows(() => geom2.validate(obs))
   t.is(pts.length, 16)
   t.true(comparePoints(pts, exp))
+})
+
+// A degenerate side leaves a one-point outline behind, which offsetFromPoints
+// passes straight through. Handing that to geom2.fromPoints throws "the given
+// points must define a closed geometry", so one stray point takes the whole
+// offset down with it — dotSCAD's curved_cabinet.scad.
+test('offset: offsetting a geometry with a degenerate outline drops it', (t) => {
+  const sides = [...geom2.toSides(rectangle({ size: [10, 10] })), [[20, 20], [20, 20]]]
+  const shape = geom2.create(sides)
+
+  t.notThrows(() => offset({ delta: 1, corners: 'round', segments: 5 }, shape))
+  t.is(geom2.toOutlines(offset({ delta: 1, corners: 'round', segments: 5 }, shape)).length, 1)
 })

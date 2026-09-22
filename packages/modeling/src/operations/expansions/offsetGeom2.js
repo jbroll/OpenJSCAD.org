@@ -40,7 +40,11 @@ const offsetGeom2 = (options, geometry) => {
   })
 
   // create a composite geometry from the new outlines
-  const allsides = newoutlines.reduce((sides, newoutline) => sides.concat(geom2.toSides(geom2.fromPoints(newoutline))), [])
+  // An outline smaller than the offset closes up entirely and comes back with
+  // fewer than three points. That one is gone, which is the whole point of the
+  // offset; it must not take the rest of the geometry with it.
+  const allsides = newoutlines.reduce((sides, newoutline) =>
+    newoutline.length < 3 ? sides : sides.concat(geom2.toSides(geom2.fromPoints(newoutline))), [])
   return geom2.create(allsides)
 }
 
