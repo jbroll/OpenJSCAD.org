@@ -95,8 +95,8 @@ test('union of one or more geom2 objects produces expected geometry', (t) => {
     )
   )
   obs = geom2.toPoints(result5)
-  t.notThrows.skip(() => geom2.validate(result5))
-  t.is(obs.length, 112)
+  t.notThrows(() => geom2.validate(result5))
+  t.is(obs.length, 111)
 })
 
 test('union of geom2 with closing issues #15', (t) => {
