@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is `@jbroll/jscad-modeling`, a fork of `@jscad/modeling`: a Constructive Solid Geometry (CSG) library for 2D and 3D geometric modeling. It implements boolean operations (union, intersect, subtract) using BSP trees on meshes. Part of the JSCAD monorepo.
+This is `@jbroll/jscad-modeling`, a fork of `@jscad/modeling`: a Constructive Solid Geometry (CSG) library for 2D and 3D geometric modeling. It implements 3D boolean operations (union, intersect, subtract) using BSP trees on meshes; 2D (geom2) booleans use the `polygon-clipping` package. Part of the JSCAD monorepo.
 
 ## Commands
 
