@@ -1,8 +1,10 @@
 const test = require('ava')
 
-const { comparePoints } = require('../../../test/helpers')
+const { comparePointSets } = require('../../../test/helpers')
 
 const { geom2 } = require('../../geometries')
+
+const { measureArea } = require('../../measurements')
 
 const { circle, rectangle } = require('../../primitives')
 
@@ -11,46 +13,38 @@ const { union } = require('./index')
 const { center } = require('../transforms/center')
 const { translate } = require('../transforms/translate')
 
+// every vertex of a closed outline has as many sides arriving as leaving
+const isClosed = (geometry) => {
+  const balance = new Map()
+  const bump = (point, n) => {
+    const key = `${point[0]},${point[1]}`
+    balance.set(key, (balance.get(key) || 0) + n)
+  }
+  geom2.toSides(geometry).forEach(([from, to]) => {
+    bump(from, 1)
+    bump(to, -1)
+  })
+  return [...balance.values()].every((n) => n === 0)
+}
+
 test('union of one or more geom2 objects produces expected geometry', (t) => {
   const geometry1 = circle({ radius: 2, segments: 8 })
+  const circlePoints = geom2.toPoints(geometry1)
 
   // union of one object
   const result1 = union(geometry1)
   let obs = geom2.toPoints(result1)
-  let exp = [
-    [2, 0],
-    [1.4142000000000001, 1.4142000000000001],
-    [0, 2],
-    [-1.4142000000000001, 1.4142000000000001],
-    [-2, 0],
-    [-1.4142000000000001, -1.4142000000000001],
-    [0, -2],
-    [1.4142000000000001, -1.4142000000000001]
-  ]
   t.notThrows(() => geom2.validate(result1))
-  t.true(comparePoints(obs, exp))
+  t.true(comparePointSets(obs, circlePoints))
 
   // union of two non-overlapping objects
   const geometry2 = center({ relativeTo: [10, 10, 0] }, rectangle({ size: [4, 4] }))
 
   const result2 = union(geometry1, geometry2)
   obs = geom2.toPoints(result2)
-  exp = [
-    [2, 0],
-    [1.4142000000000001, 1.4142000000000001],
-    [0, 2],
-    [-1.4142000000000001, 1.4142000000000001],
-    [-2, 0],
-    [-1.4142000000000001, -1.4142000000000001],
-    [0, -2],
-    [8, 12],
-    [8, 8],
-    [12, 8],
-    [12, 12],
-    [1.4142000000000001, -1.4142000000000001]
-  ]
+  let exp = [...circlePoints, [8, 12], [8, 8], [12, 8], [12, 12]]
   t.notThrows(() => geom2.validate(result2))
-  t.true(comparePoints(obs, exp))
+  t.true(comparePointSets(obs, exp))
 
   // union of two partially overlapping objects
   const geometry3 = rectangle({ size: [18, 18] })
@@ -58,29 +52,17 @@ test('union of one or more geom2 objects produces expected geometry', (t) => {
   const result3 = union(geometry2, geometry3)
   obs = geom2.toPoints(result3)
   exp = [
-    [11.999973333333333, 11.999973333333333],
-    [7.999933333333333, 11.999973333333333],
-    [9.000053333333334, 7.999933333333333],
-    [-9.000053333333334, 9.000053333333334],
-    [-9.000053333333334, -9.000053333333334],
-    [9.000053333333334, -9.000053333333334],
-    [7.999933333333333, 9.000053333333334],
-    [11.999973333333333, 7.999933333333333]
+    [12, 12], [8, 12], [8, 9], [-9, 9], [-9, -9], [9, -9], [9, 8], [12, 8]
   ]
   t.notThrows(() => geom2.validate(result3))
-  t.true(comparePoints(obs, exp))
+  t.true(comparePointSets(obs, exp))
 
   // union of two completely overlapping objects
   const result4 = union(geometry1, geometry3)
   obs = geom2.toPoints(result4)
-  exp = [
-    [-9.000046666666666, -9.000046666666666],
-    [9.000046666666666, -9.000046666666666],
-    [9.000046666666666, 9.000046666666666],
-    [-9.000046666666666, 9.000046666666666]
-  ]
+  exp = [[-9, -9], [9, -9], [9, 9], [-9, 9]]
   t.notThrows(() => geom2.validate(result4))
-  t.true(comparePoints(obs, exp))
+  t.true(comparePointSets(obs, exp))
 
   // union of unions of non-overlapping objects (BSP gap from #907)
   const circ = circle({ radius: 1, segments: 32 })
@@ -96,7 +78,8 @@ test('union of one or more geom2 objects produces expected geometry', (t) => {
   )
   obs = geom2.toPoints(result5)
   t.notThrows(() => geom2.validate(result5))
-  t.is(obs.length, 111)
+  t.is(obs.length, 96)
+  t.is(geom2.toOutlines(result5).length, 3)
 })
 
 test('union of geom2 with closing issues #15', (t) => {
@@ -136,31 +119,88 @@ test('union of geom2 with closing issues #15', (t) => {
   // geom2.toOutlines(d)
 
   const obs = union(c, d)
-  // const outlines = geom2.toOutlines(obs)
   const pts = geom2.toPoints(obs)
   const exp = [
-    [-49.10585516965137, -15.276000175919414],
-    [-49.0573272145917, -15.486679335654257],
-    [-49.307011370463215, -15.815286644243773],
-    [-46.00502320253235, -17.211117609669667],
-    [-45.85943933735334, -17.215031154432545],
-    [-45.74972963250071, -17.119149307742074],
-    [-45.734205904941305, -16.974217700023555],
-    [-48.166473975068946, -15.86316234184296],
-    [-49.318621553259746, -15.801589237573706],
-    [-49.585786209072104, -14.975570389622606],
-    [-68.31614189569036, -3.1078763476921982],
-    [-49.53751915699663, -15.184292776976012],
-    [-68.09789654941396, -2.7727464644978874],
-    [-68.24752441084793, -2.7462648116024244],
-    [-68.37262739176788, -2.8324932478777995],
-    [-68.40093536555268, -2.98186020632758],
-    [-54.61234310251047, -11.79072766159384],
-    [-49.30335872868453, -14.680880468978017],
-    [-49.34040695243976, -15.797284338334542],
-    [-45.82121705016925, -16.857333163105647]
+    [-68.31614651314507, -3.1079037395143487],
+    [-49.340367696114726, -15.797331574340568],
+    [-49.318612612739564, -15.801551272562577],
+    [-49.30706235399221, -15.815296746000918],
+    [-46.00505780290427, -17.211085479998047],
+    [-45.859397037232526, -17.21502856394237],
+    [-45.74972032664388, -17.119093034957913],
+    [-45.73424573227583, -16.974202926612953],
+    [-45.82118740347841, -16.8572681055562],
+    [-49.30279490346146, -14.681262706708324],
+    [-68.09792828135777, -2.7727075661152867],
+    [-68.24753735887461, -2.7462335017957002],
+    [-68.37258141465594, -2.8325337698763633],
+    [-54.61235529924313, -11.790667693213138],
+    [-49.58572929483431, -14.975526866122138],
+    [-49.53755741140094, -15.184271834314728],
+    [-49.10586702080816, -15.276041773521108],
+    [-48.16645938811709, -15.863171735891832],
+    [-49.057272912186846, -15.486616385421712],
+    [-68.40089829889257, -2.9818050203707855]
   ]
   t.notThrows(() => geom2.validate(obs))
   t.is(pts.length, 20) // number of sides in union
-  t.true(comparePoints(pts, exp))
+  t.is(geom2.toOutlines(obs).length, 3)
+  t.true(comparePointSets(pts, exp))
+  t.true(Math.abs(measureArea(obs) - 17.5612067) < 1e-6)
+})
+
+test('union of near-coincident, slightly non-parallel operands forms closed outlines', (t) => {
+  const left = geom2.fromPoints([[0, 0], [10, 0], [10, 10], [0, 10]])
+  // right operand's left edge runs from x0 at y=0 to x1 at y=10, within 1e-5 of x=10
+  const edges = [
+    [10 - 1e-6, 10 - 5e-6],
+    [10 - 1e-5, 10 - 2e-6],
+    [10 - 3e-6, 10 + 3e-6],
+    [10 + 1e-6, 10 + 7e-6]
+  ]
+  edges.forEach(([x0, x1]) => {
+    const right = geom2.fromPoints([[x0, 0], [20, 0], [20, 10], [x1, 10]])
+    const result = union(left, right)
+    t.notThrows(() => geom2.validate(result))
+    t.true(isClosed(result))
+    const overlap = (10 - x0 + 10 - x1) / 2 * 10
+    t.true(Math.abs(measureArea(result) - (100 + measureArea(right) - Math.max(overlap, 0))) < 1e-4)
+  })
+})
+
+test('union of near-coincident rotated operands forms closed outlines', (t) => {
+  const base = rectangle({ size: [4, 4] })
+  for (let i = 1; i <= 50; i++) {
+    const shift = 4 + i * 2e-7
+    const tilted = geom2.fromPoints([[shift, 0], [8, 0], [8, 4], [shift + (i % 2 ? 1 : -1) * 3e-6, 4]])
+    const result = union(translate([2, 2], base), tilted, translate([0, 4 - i * 1e-7], base))
+    t.notThrows(() => geom2.validate(result))
+    t.true(isClosed(result))
+  }
+})
+
+test('union of disjoint geom2 keeps both outlines', (t) => {
+  const a = rectangle({ size: [2, 2] })
+  const b = translate([5, 0], rectangle({ size: [2, 2] }))
+  const result = union(a, b)
+  t.notThrows(() => geom2.validate(result))
+  t.is(geom2.toOutlines(result).length, 2)
+  t.is(measureArea(result), 8)
+})
+
+test('union with an empty geom2 returns the other operand', (t) => {
+  const a = rectangle({ size: [2, 2] })
+  const result = union(a, geom2.create())
+  t.notThrows(() => geom2.validate(result))
+  t.true(comparePointSets(geom2.toPoints(result), geom2.toPoints(a)))
+  t.is(geom2.toPoints(union(geom2.create(), geom2.create())).length, 0)
+})
+
+// operands of the first open union in NopSCADlib tests/horiholes.scad under the 3D-BSP booleans
+test('union of near-coincident slots from horiholes.scad forms closed outlines', (t) => {
+  const operands = require('../../../test/fixtures/horiholesUnionOperands.json').map((sides) => geom2.create(sides))
+  const result = union(operands)
+  t.true(isClosed(result))
+  t.notThrows(() => geom2.validate(result))
+  t.is(geom2.toOutlines(result).length, 16)
 })

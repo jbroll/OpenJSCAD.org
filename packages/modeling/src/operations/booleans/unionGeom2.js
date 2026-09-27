@@ -1,12 +1,8 @@
+const polygonClipping = require('polygon-clipping')
+
 const flatten = require('../../utils/flatten')
 
-const geom3 = require('../../geometries/geom3')
-
-const measureEpsilon = require('../../measurements/measureEpsilon')
-
-const fromFakePolygons = require('./fromFakePolygons')
-const to3DWalls = require('./to3DWalls')
-const unionGeom3 = require('./unionGeom3')
+const { fromMultiPolygon, toMultiPolygon } = require('./geom2Clipping')
 
 /*
  * Return a new 2D geometry representing the total space in the given 2D geometries.
@@ -15,12 +11,8 @@ const unionGeom3 = require('./unionGeom3')
  */
 const union = (...geometries) => {
   geometries = flatten(geometries)
-  const newgeometries = geometries.map((geometry) => to3DWalls({ z0: -1, z1: 1 }, geometry))
-
-  const newgeom3 = unionGeom3(newgeometries)
-  const epsilon = measureEpsilon(newgeom3)
-
-  return fromFakePolygons(epsilon, geom3.toPolygons(newgeom3))
+  const operands = geometries.map(toMultiPolygon)
+  return fromMultiPolygon(polygonClipping.union(...operands))
 }
 
 module.exports = union
