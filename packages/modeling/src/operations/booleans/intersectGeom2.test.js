@@ -4,6 +4,8 @@ const { comparePointSets } = require('../../../test/helpers')
 
 const { geom2 } = require('../../geometries')
 
+const { measureArea } = require('../../measurements')
+
 const { circle, rectangle } = require('../../primitives')
 
 const { intersect } = require('./index')
@@ -53,4 +55,13 @@ test('intersect: an empty geom2 operand gives an empty result', (t) => {
   const result = intersect(rectangle({ size: [2, 2] }), geom2.create())
   t.notThrows(() => geom2.validate(result))
   t.is(geom2.toSides(result).length, 0)
+})
+
+// polygon-clipping 0.15.7 threw "Unable to complete output ring" on these (dotSCAD fidget_boo.scad)
+test('intersect of spiral arms from fidget_boo.scad', (t) => {
+  const operands = require('../../../test/fixtures/fidgetBooIntersectOperands.json').map((sides) => geom2.create(sides))
+  const result = intersect(operands)
+  t.notThrows(() => geom2.validate(result))
+  t.is(geom2.toOutlines(result).length, 1)
+  t.true(Math.abs(measureArea(result) - 0.063740922) < 1e-8)
 })

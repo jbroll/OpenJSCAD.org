@@ -58,7 +58,7 @@
     "access": "public"
   },
   "dependencies": {
-    "polygon-clipping": "^0.15.7"
+    "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
     "ava": "3.15.0",

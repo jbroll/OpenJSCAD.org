@@ -140,10 +140,11 @@ test('union of geom2 with closing issues #15', (t) => {
     [-49.10586702080816, -15.276041773521108],
     [-48.16645938811709, -15.863171735891832],
     [-49.057272912186846, -15.486616385421712],
+    [-49.08050068467657, -15.385962637135988], // collinear, where d's edge meets c's
     [-68.40089829889257, -2.9818050203707855]
   ]
   t.notThrows(() => geom2.validate(obs))
-  t.is(pts.length, 20) // number of sides in union
+  t.is(pts.length, 21) // number of sides in union
   t.is(geom2.toOutlines(obs).length, 3)
   t.true(comparePointSets(pts, exp))
   t.true(Math.abs(measureArea(obs) - 17.5612067) < 1e-6)
@@ -203,4 +204,13 @@ test('union of near-coincident slots from horiholes.scad forms closed outlines',
   t.true(isClosed(result))
   t.notThrows(() => geom2.validate(result))
   t.is(geom2.toOutlines(result).length, 16)
+})
+
+// polygon-clipping 0.15.7 threw "Unable to complete output ring" on these (dotSCAD heart2heart_maze.scad)
+test('union of maze wall segments from heart2heart_maze.scad', (t) => {
+  const operands = require('../../../test/fixtures/heart2heartUnionOperands.json').map((sides) => geom2.create(sides))
+  const result = union(operands)
+  t.true(isClosed(result))
+  t.is(geom2.toOutlines(result).length, 4)
+  t.true(Math.abs(measureArea(result) - 98.160368618) < 1e-6)
 })

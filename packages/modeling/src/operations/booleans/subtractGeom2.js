@@ -1,4 +1,4 @@
-const polygonClipping = require('polygon-clipping')
+const polygonClipping = require('polyclip-ts')
 
 const flatten = require('../../utils/flatten')
 

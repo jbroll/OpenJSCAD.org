@@ -1,11 +1,11 @@
-const polygonClipping = require('polygon-clipping')
+const polygonClipping = require('polyclip-ts')
 
 const vec2 = require('../../maths/vec2')
 
 const geom2 = require('../../geometries/geom2')
 
 // Chain sides into rings without requiring closure, so a geom2 left open by
-// an earlier boolean still yields its region (polygon-clipping closes rings).
+// an earlier boolean still yields its region (the clipper closes rings).
 const chainSides = (sides) => {
   const key = (point) => `${point[0]},${point[1]}`
   const outgoing = new Map()
@@ -47,8 +47,8 @@ const toRings = (geometry) => {
 }
 
 /*
- * Convert a geom2 into a polygon-clipping MultiPolygon.
- * Outlines are resolved even-odd, since polygon-clipping ignores orientation
+ * Convert a geom2 into a polyclip-ts MultiPolygon.
+ * Outlines are resolved even-odd, since polyclip-ts ignores orientation
  * and wants each polygon as [outer, ...holes].
  */
 const toMultiPolygon = (geometry) => {
@@ -60,7 +60,7 @@ const toMultiPolygon = (geometry) => {
 }
 
 /*
- * Convert a polygon-clipping MultiPolygon into a geom2.
+ * Convert a polyclip-ts MultiPolygon into a geom2.
  * Rings come back closed (last point repeats the first), outers CCW and holes CW.
  */
 const fromMultiPolygon = (multiPolygon) => {
