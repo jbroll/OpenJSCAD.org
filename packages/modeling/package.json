@@ -57,6 +57,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "polygon-clipping": "^0.15.7"
+  },
   "devDependencies": {
     "ava": "3.15.0",
     "browserify": "16.5.1",
