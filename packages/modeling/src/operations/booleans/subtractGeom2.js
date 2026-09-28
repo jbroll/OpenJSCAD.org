@@ -1,8 +1,6 @@
-const polygonClipping = require('polyclip-ts')
-
 const flatten = require('../../utils/flatten')
 
-const { fromMultiPolygon, toMultiPolygon } = require('./geom2Clipping')
+const clipGeom2 = require('./geom2Clipping')
 
 /*
  * Return a new 2D geometry representing space in the first geometry but
@@ -10,10 +8,6 @@ const { fromMultiPolygon, toMultiPolygon } = require('./geom2Clipping')
  * @param {...geom2} geometries - list of geometries
  * @returns {geom2} new 2D geometry
  */
-const subtract = (...geometries) => {
-  geometries = flatten(geometries)
-  const operands = geometries.map(toMultiPolygon)
-  return fromMultiPolygon(polygonClipping.difference(...operands))
-}
+const subtract = (...geometries) => clipGeom2('subtract', flatten(geometries))
 
 module.exports = subtract

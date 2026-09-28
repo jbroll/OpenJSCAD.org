@@ -75,3 +75,13 @@ test('subtract: multiple geom2 are all removed from the first', (t) => {
   t.notThrows(() => geom2.validate(result))
   t.is(geom2.toOutlines(result).length, 3)
 })
+
+// polyclip-ts 0.16.8 threw "Unable to complete output ring" on these (NopSCADlib pin_headers.scad)
+test('subtract of a pin header housing from pin_headers.scad', (t) => {
+  const { measureArea } = require('../../measurements')
+  const operands = require('../../../test/fixtures/pinHeadersSubtractOperands.json').map((sides) => geom2.create(sides))
+  const result = subtract(operands)
+  t.notThrows(() => geom2.validate(result))
+  t.is(geom2.toOutlines(result).length, 4)
+  t.true(Math.abs(measureArea(result) - 27.12) < 1e-6)
+})

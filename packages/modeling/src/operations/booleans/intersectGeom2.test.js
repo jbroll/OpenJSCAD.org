@@ -65,3 +65,12 @@ test('intersect of spiral arms from fidget_boo.scad', (t) => {
   t.is(geom2.toOutlines(result).length, 1)
   t.true(Math.abs(measureArea(result) - 0.063740922) < 1e-8)
 })
+
+// polyclip-ts 0.16.8 threw "Unable to complete output ring" on these (dotSCAD voronoi_penholder.scad)
+test('intersect of voronoi cell bounds from voronoi_penholder.scad', (t) => {
+  const operands = require('../../../test/fixtures/voronoiPenholderIntersectOperands.json').map((sides) => geom2.create(sides))
+  const result = intersect(operands)
+  t.notThrows(() => geom2.validate(result))
+  t.is(geom2.toOutlines(result).length, 1)
+  t.true(Math.abs(measureArea(result) - 733.447303021) < 1e-6)
+})

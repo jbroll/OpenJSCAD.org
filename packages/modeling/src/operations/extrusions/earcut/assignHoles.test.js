@@ -6,7 +6,7 @@ const assignHoles = require('./assignHoles')
 
 test('slice: assignHoles() should return a polygon hierarchy', (t) => {
   const exp1 = [{
-    solid: [[3, -3], [3, 3], [-3, 3], [-3, -3]],
+    solid: [[-3, 3], [-3, -3], [3, -3], [3, 3]],
     holes: [[[-2, 2], [2, 2], [2, -2], [-2, -2]]]
   }]
   const geometry = subtract(
@@ -32,11 +32,11 @@ test('slice: assignHoles() should handle nested holes', (t) => {
 
   const exp1 = [
     {
-      solid: [[5, -5], [5, 5], [-5, 5], [-5, -5]],
+      solid: [[-5, 5], [-5, -5], [5, -5], [5, 5]],
       holes: [[[-4, 4], [4, 4], [4, -4], [-4, -4]]]
     },
     {
-      solid: [[3, -3], [3, 3], [-3, 3], [-3, -3]],
+      solid: [[-3, 3], [-3, -3], [3, -3], [3, 3]],
       holes: [[[-2, 2], [2, 2], [2, -2], [-2, -2]]]
     }
   ]
