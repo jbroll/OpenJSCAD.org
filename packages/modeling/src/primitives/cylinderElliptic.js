@@ -8,6 +8,7 @@ const poly3 = require('../geometries/poly3')
 const { sin, cos } = require('../maths/utils/trigonometry')
 
 const { isGT, isGTE, isNumberArray } = require('./commonChecks')
+const wrapAngle = require('./wrapAngle')
 
 /**
  * Construct a Z axis-aligned elliptic cylinder in three dimensional space.
@@ -44,12 +45,12 @@ const cylinderElliptic = (options) => {
   if (!isNumberArray(endRadius, 2)) throw new Error('endRadius must be an array of X and Y values')
   if (!endRadius.every((n) => n >= 0)) throw new Error('endRadius values must be positive')
   if (endRadius.every((n) => n === 0) && startRadius.every((n) => n === 0)) throw new Error('at least one radius must be positive')
-  if (!isGTE(startAngle, 0)) throw new Error('startAngle must be positive')
-  if (!isGTE(endAngle, 0)) throw new Error('endAngle must be positive')
+  if (!Number.isFinite(startAngle)) throw new Error('startAngle must be a finite number')
+  if (!Number.isFinite(endAngle)) throw new Error('endAngle must be a finite number')
   if (!isGTE(segments, 3)) throw new Error('segments must be three or more')
 
-  startAngle = startAngle % TAU
-  endAngle = endAngle % TAU
+  startAngle = wrapAngle(startAngle)
+  endAngle = wrapAngle(endAngle)
 
   let rotation = TAU
   if (startAngle < endAngle) {

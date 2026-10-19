@@ -40,7 +40,8 @@ const torus = (options) => {
   if (!isGTE(innerSegments, 3)) throw new Error('innerSegments must be three or more')
   if (!isGT(outerRadius, 0)) throw new Error('outerRadius must be greater than zero')
   if (!isGTE(outerSegments, 3)) throw new Error('outerSegments must be three or more')
-  if (!isGTE(startAngle, 0)) throw new Error('startAngle must be positive')
+  // extrudeRotate sweeps from a negative start correctly, so the angle passes through unwrapped
+  if (!Number.isFinite(startAngle)) throw new Error('startAngle must be a finite number')
   if (!isGT(outerRotation, 0)) throw new Error('outerRotation must be greater than zero')
 
   if (innerRadius >= outerRadius) throw new Error('inner circle is too large to rotate about the outer circle')

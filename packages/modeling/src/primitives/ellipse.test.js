@@ -138,6 +138,38 @@ test('ellipse (options)', (t) => {
   t.deepEqual(obs.length, 72)
 })
 
+test('ellipse (negative startAngle)', (t) => {
+  const geometry = ellipse({ radius: [2, 1], startAngle: -TAU / 4, endAngle: TAU / 4, segments: 16 })
+  const exp = geom2.toPoints(ellipse({ radius: [2, 1], startAngle: TAU * 3 / 4, endAngle: TAU / 4, segments: 16 }))
+  const obs = geom2.toPoints(geometry)
+
+  t.notThrows(() => geom2.validate(geometry))
+  t.is(obs.length, 10) // 9 arc points plus the center
+  t.true(comparePoints(obs, exp))
+})
+
+test('ellipse (negative endAngle)', (t) => {
+  const obs = geom2.toPoints(ellipse({ endAngle: -TAU / 4, segments: 16 }))
+  const exp = geom2.toPoints(ellipse({ endAngle: TAU * 3 / 4, segments: 16 }))
+
+  t.true(comparePoints(obs, exp))
+
+  // a negative full turn is still a full turn
+  t.true(comparePoints(geom2.toPoints(ellipse({ endAngle: -TAU })), geom2.toPoints(ellipse())))
+})
+
+test('ellipse (angles above TAU wrap)', (t) => {
+  const obs = geom2.toPoints(ellipse({ startAngle: TAU + 1, endAngle: TAU + 2 }))
+  const exp = geom2.toPoints(ellipse({ startAngle: 1, endAngle: 2 }))
+
+  t.true(comparePoints(obs, exp))
+})
+
+test('ellipse (non-finite angles throw)', (t) => {
+  t.throws(() => ellipse({ startAngle: NaN }), { message: 'startAngle must be a finite number' })
+  t.throws(() => ellipse({ endAngle: -Infinity }), { message: 'endAngle must be a finite number' })
+})
+
 test('ellipse (zero radius)', (t) => {
   const geometry = ellipse({ radius: [1, 0] })
   const obs = geom2.toPoints(geometry)

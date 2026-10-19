@@ -165,6 +165,39 @@ test('arc (options)', (t) => {
   t.true(comparePoints(obs, exp))
 })
 
+test('arc (negative startAngle)', (t) => {
+  const geometry = arc({ startAngle: -TAU / 4, endAngle: TAU / 4, segments: 16 })
+  const obs = path2.toPoints(geometry)
+
+  t.notThrows(() => path2.validate(geometry))
+  t.is(obs.length, 9)
+  t.true(comparePoints([obs[0], obs[4], obs[8]], [[0, -1], [1, 0], [0, 1]]))
+  t.true(comparePoints(obs, path2.toPoints(arc({ startAngle: TAU * 3 / 4, endAngle: TAU / 4, segments: 16 }))))
+})
+
+test('arc (negative endAngle)', (t) => {
+  const obs = path2.toPoints(arc({ startAngle: 0, endAngle: -TAU / 4, segments: 16 }))
+  const exp = path2.toPoints(arc({ startAngle: 0, endAngle: TAU * 3 / 4, segments: 16 }))
+
+  t.is(obs.length, 13)
+  t.true(comparePoints(obs, exp))
+
+  // a negative full turn is still a full turn
+  t.true(comparePoints(path2.toPoints(arc({ endAngle: -TAU })), path2.toPoints(arc())))
+})
+
+test('arc (angles above TAU wrap)', (t) => {
+  const obs = path2.toPoints(arc({ startAngle: TAU + TAU / 4, endAngle: TAU + TAU / 2, segments: 16 }))
+  const exp = path2.toPoints(arc({ startAngle: TAU / 4, endAngle: TAU / 2, segments: 16 }))
+
+  t.true(comparePoints(obs, exp))
+})
+
+test('arc (non-finite angles throw)', (t) => {
+  t.throws(() => arc({ startAngle: NaN }), { message: 'startAngle must be a finite number' })
+  t.throws(() => arc({ endAngle: Infinity }), { message: 'endAngle must be a finite number' })
+})
+
 test('arc (rotations)', (t) => {
   let exp = [
   [ 0, 1 ],

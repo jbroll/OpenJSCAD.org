@@ -147,6 +147,13 @@ test('circle (options)', (t) => {
   t.true(comparePoints(pts, exp))
 })
 
+test('circle (negative angles)', (t) => {
+  const obs = geom2.toPoints(circle({ startAngle: -TAU / 4, endAngle: -TAU / 8 }))
+  const exp = geom2.toPoints(circle({ startAngle: TAU * 3 / 4, endAngle: TAU * 7 / 8 }))
+
+  t.true(comparePoints(obs, exp))
+})
+
 test('circle (radius zero)', (t) => {
   const geometry = circle({ radius: 0 })
   const pts = geom2.toPoints(geometry)

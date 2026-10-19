@@ -4,6 +4,7 @@ const vec2 = require('../maths/vec2')
 const geom2 = require('../geometries/geom2')
 
 const { isGT, isGTE, isNumberArray } = require('./commonChecks')
+const wrapAngle = require('./wrapAngle')
 
 // @see http://www.jdawiseman.com/papers/easymath/surds_star_inner_radius.html
 const getRadiusRatio = (vertices, density) => {
@@ -58,13 +59,13 @@ const star = (options) => {
   if (!isGTE(vertices, 2)) throw new Error('vertices must be two or more')
   if (!isGT(outerRadius, 0)) throw new Error('outerRadius must be greater than zero')
   if (!isGTE(innerRadius, 0)) throw new Error('innerRadius must be greater than zero')
-  if (!isGTE(startAngle, 0)) throw new Error('startAngle must be greater than zero')
+  if (!Number.isFinite(startAngle)) throw new Error('startAngle must be a finite number')
 
   // force integers
   vertices = Math.floor(vertices)
   density = Math.floor(density)
 
-  startAngle = startAngle % TAU
+  startAngle = wrapAngle(startAngle)
 
   if (innerRadius === 0) {
     if (!isGTE(density, 2)) throw new Error('density must be two or more')

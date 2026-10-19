@@ -196,6 +196,36 @@ test('cylinderElliptic (options)', (t) => {
   t.true(comparePolygonsAsPoints(pts, exp))
 })
 
+test('cylinderElliptic (negative startAngle)', (t) => {
+  const obs = cylinderElliptic({ startAngle: -TAU / 4, endAngle: TAU / 4, segments: 12 })
+  const exp = cylinderElliptic({ startAngle: TAU * 3 / 4, endAngle: TAU / 4, segments: 12 })
+
+  t.notThrows(() => geom3.validate(obs))
+  t.true(comparePolygonsAsPoints(geom3.toPoints(obs), geom3.toPoints(exp)))
+})
+
+test('cylinderElliptic (negative endAngle)', (t) => {
+  const obs = cylinderElliptic({ endAngle: -TAU / 4, segments: 12 })
+  const exp = cylinderElliptic({ endAngle: TAU * 3 / 4, segments: 12 })
+
+  t.true(comparePolygonsAsPoints(geom3.toPoints(obs), geom3.toPoints(exp)))
+
+  // a negative full turn is still a full turn
+  t.true(comparePolygonsAsPoints(geom3.toPoints(cylinderElliptic({ endAngle: -TAU })), geom3.toPoints(cylinderElliptic())))
+})
+
+test('cylinderElliptic (angles above TAU wrap)', (t) => {
+  const obs = cylinderElliptic({ startAngle: TAU + 1, endAngle: TAU + 2, segments: 12 })
+  const exp = cylinderElliptic({ startAngle: 1, endAngle: 2, segments: 12 })
+
+  t.true(comparePolygonsAsPoints(geom3.toPoints(obs), geom3.toPoints(exp)))
+})
+
+test('cylinderElliptic (non-finite angles throw)', (t) => {
+  t.throws(() => cylinderElliptic({ startAngle: NaN }), { message: 'startAngle must be a finite number' })
+  t.throws(() => cylinderElliptic({ endAngle: Infinity }), { message: 'endAngle must be a finite number' })
+})
+
 test('cylinderElliptic (cone)', (t) => {
   const obs = cylinderElliptic({ endRadius: [0, 0] })
   const pts = geom3.toPoints(obs)

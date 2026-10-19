@@ -7,6 +7,7 @@ const geom2 = require('../geometries/geom2')
 const { sin, cos } = require('../maths/utils/trigonometry')
 
 const { isGTE, isNumberArray } = require('./commonChecks')
+const wrapAngle = require('./wrapAngle')
 
 /**
  * Construct an axis-aligned ellipse in two dimensional space.
@@ -35,15 +36,15 @@ const ellipse = (options) => {
   if (!isNumberArray(center, 2)) throw new Error('center must be an array of X and Y values')
   if (!isNumberArray(radius, 2)) throw new Error('radius must be an array of X and Y values')
   if (!radius.every((n) => n >= 0)) throw new Error('radius values must be positive')
-  if (!isGTE(startAngle, 0)) throw new Error('startAngle must be positive')
-  if (!isGTE(endAngle, 0)) throw new Error('endAngle must be positive')
+  if (!Number.isFinite(startAngle)) throw new Error('startAngle must be a finite number')
+  if (!Number.isFinite(endAngle)) throw new Error('endAngle must be a finite number')
   if (!isGTE(segments, 3)) throw new Error('segments must be three or more')
 
   // if any radius is zero return empty geometry
   if (radius[0] === 0 || radius[1] === 0) return geom2.create()
 
-  startAngle = startAngle % TAU
-  endAngle = endAngle % TAU
+  startAngle = wrapAngle(startAngle)
+  endAngle = wrapAngle(endAngle)
 
   let rotation = TAU
   if (startAngle < endAngle) {

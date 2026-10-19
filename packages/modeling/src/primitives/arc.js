@@ -5,6 +5,7 @@ const vec2 = require('../maths/vec2')
 const path2 = require('../geometries/path2')
 
 const { isGT, isGTE, isNumberArray } = require('./commonChecks')
+const wrapAngle = require('./wrapAngle')
 
 /**
  * Construct an arc in two dimensional space where all points are at the same distance from the center.
@@ -33,12 +34,12 @@ const arc = (options) => {
 
   if (!isNumberArray(center, 2)) throw new Error('center must be an array of X and Y values')
   if (!isGT(radius, 0)) throw new Error('radius must be greater than zero')
-  if (!isGTE(startAngle, 0)) throw new Error('startAngle must be positive')
-  if (!isGTE(endAngle, 0)) throw new Error('endAngle must be positive')
+  if (!Number.isFinite(startAngle)) throw new Error('startAngle must be a finite number')
+  if (!Number.isFinite(endAngle)) throw new Error('endAngle must be a finite number')
   if (!isGTE(segments, 4)) throw new Error('segments must be four or more')
 
-  startAngle = startAngle % TAU
-  endAngle = endAngle % TAU
+  startAngle = wrapAngle(startAngle)
+  endAngle = wrapAngle(endAngle)
 
   let rotation = TAU
   if (startAngle < endAngle) {

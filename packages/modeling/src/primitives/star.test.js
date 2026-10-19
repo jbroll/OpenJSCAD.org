@@ -1,5 +1,7 @@
 const test = require('ava')
 
+const { TAU } = require('../maths/constants')
+
 const { star } = require('./index')
 
 const geom2 = require('../geometries/geom2')
@@ -25,6 +27,26 @@ test('star (defaults)', (t) => {
   t.notThrows(() => geom2.validate(geometry))
   t.deepEqual(pts.length, 10)
   t.true(comparePoints(pts, exp))
+})
+
+test('star (negative startAngle wraps into 0 to TAU)', (t) => {
+  const geometry = star({ outerRadius: 5, startAngle: -TAU / 8 })
+  const exp = geom2.toPoints(star({ outerRadius: 5, startAngle: TAU * 7 / 8 }))
+
+  t.notThrows(() => geom2.validate(geometry))
+  t.true(comparePoints(geom2.toPoints(geometry), exp))
+})
+
+test('star (startAngle above TAU wraps)', (t) => {
+  const geometry = star({ startAngle: TAU + 1 })
+  const exp = geom2.toPoints(star({ startAngle: 1 }))
+
+  t.true(comparePoints(geom2.toPoints(geometry), exp))
+})
+
+test('star (non-finite startAngle throws)', (t) => {
+  t.throws(() => star({ startAngle: NaN }), { message: 'startAngle must be a finite number' })
+  t.throws(() => star({ startAngle: -Infinity }), { message: 'startAngle must be a finite number' })
 })
 
 test('star (options)', (t) => {

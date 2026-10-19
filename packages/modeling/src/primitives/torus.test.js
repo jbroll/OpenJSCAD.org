@@ -49,6 +49,26 @@ test('torus (startAngle)', (t) => {
   t.is(pts.length, 2048)
 })
 
+test('torus (negative startAngle)', (t) => {
+  // sweeps -TAU/4 to TAU/4, the half at positive X
+  const obs = torus({ startAngle: -TAU / 4, outerRotation: TAU / 2 })
+  t.notThrows(() => geom3.validate(obs))
+
+  const bounds = measureBoundingBox(obs)
+  const expectedBounds = [[0, -5, -1], [5, 5, 1]]
+  t.true(comparePoints(bounds, expectedBounds), 'Bounding box was not as expected: ' + JSON.stringify(bounds))
+})
+
+test('torus (startAngle above TAU)', (t) => {
+  const bounds = measureBoundingBox(torus({ startAngle: TAU + TAU / 4, outerRotation: TAU / 4 }))
+  const expectedBounds = [[-5, 0, -1], [0, 5, 1]]
+  t.true(comparePoints(bounds, expectedBounds), 'Bounding box was not as expected: ' + JSON.stringify(bounds))
+})
+
+test('torus (non-finite startAngle throws)', (t) => {
+  t.throws(() => torus({ startAngle: NaN }), { message: 'startAngle must be a finite number' })
+})
+
 test('torus (square by square)', (t) => {
   const obs = torus({ innerSegments: 4, outerSegments: 4, innerRotation: TAU / 4 })
 
